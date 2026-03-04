@@ -9,13 +9,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Aplica a todas las rutas de la API
-                .allowedOrigins(
-                        "http://localhost:4200", // Para cuando pruebas en tu PC
-                        "https://tu-proyecto-angular.vercel.app" // Tu futura URL de Vercel
-                )
+        registry.addMapping("/**")
+                .allowedOrigins("https://tu-app-frontend.vercel.app", "http://localhost:4200") // <-- AQUÍ VA TU URL DE VERCEL
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
+
     }
 }
