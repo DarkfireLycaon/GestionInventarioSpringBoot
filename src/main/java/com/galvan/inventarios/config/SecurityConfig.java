@@ -43,20 +43,23 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 1. Especificamos las URLs exactas (SIN asteriscos aquí)
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://inventario-eight-mu.vercel.app",
-                "https://inventario-kqyk86s5v-darkfirelycaons-projects.vercel.app",
+        // Al usar allowCredentials(true), NO podemos usar "*" en allowedOrigins.
+        // Usamos allowedOriginPatterns que es más flexible y compatible.
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "https://*.vercel.app",
                 "http://localhost:4200"
         ));
 
-        // 2. O usamos patrones (pero NO el asterisco solo)
-        configuration.setAllowedOriginPatterns(Arrays.asList("https://*.vercel.app"));
-
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // 3. IMPORTANTE: No uses "*" en Headers si usas allowCredentials
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Origin", "Accept", "X-Requested-With"));
+        // Especificamos los encabezados en lugar de usar "*"
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "Origin",
+                "Accept",
+                "X-Requested-With"
+        ));
 
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
