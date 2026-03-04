@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("inventario-app")
-@CrossOrigin(value = "http://localhost:4200")
+@CrossOrigin(value = "*")
 public class ProveedorControlador {
     private static final Logger LOG = LoggerFactory.getLogger(ProveedorControlador.class);
 
