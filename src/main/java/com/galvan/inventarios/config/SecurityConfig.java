@@ -43,17 +43,22 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Usamos setAllowedOriginPatterns para permitir cualquier URL que termine en .vercel.app
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-                "https://*.vercel.app",
+        // 1. Especificamos las URLs exactas (SIN asteriscos aquí)
+        configuration.setAllowedOrigins(Arrays.asList(
+                "https://inventario-eight-mu.vercel.app",
+                "https://inventario-kqyk86s5v-darkfirelycaons-projects.vercel.app",
                 "http://localhost:4200"
         ));
 
+        // 2. O usamos patrones (pero NO el asterisco solo)
+        configuration.setAllowedOriginPatterns(Arrays.asList("https://*.vercel.app"));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // Permitimos todos los headers para evitar que falte alguno como 'Authorization'
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        // 3. IMPORTANTE: No uses "*" en Headers si usas allowCredentials
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Origin", "Accept", "X-Requested-With"));
+
         configuration.setAllowCredentials(true);
-        // Exponemos los headers por si Angular necesita leer algo de la respuesta
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
