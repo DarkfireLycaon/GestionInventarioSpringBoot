@@ -42,13 +42,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://inventario-kqyk86s5v-darkfirelycaons-projects.vercel.app",
+
+        // Usamos setAllowedOriginPatterns para permitir cualquier URL que termine en .vercel.app
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "https://*.vercel.app",
                 "http://localhost:4200"
         ));
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "Origin", "Accept"));
+        // Permitimos todos los headers para evitar que falte alguno como 'Authorization'
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        // Exponemos los headers por si Angular necesita leer algo de la respuesta
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
