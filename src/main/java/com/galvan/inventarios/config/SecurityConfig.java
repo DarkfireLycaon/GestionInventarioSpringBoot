@@ -43,17 +43,15 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // NO USES setAllowedOrigins con "*" si usas Credentials.
-        // Usamos Patterns para que Spring sea feliz.
-        configuration.setAllowedOriginPatterns(Arrays.asList(
+        // Cambiamos a setAllowedOrigins y ponemos las URLs EXACTAS sin asteriscos
+        configuration.setAllowedOrigins(Arrays.asList(
                 "https://inventario-eight-mu.vercel.app",
-                "https://*.vercel.app",
                 "http://localhost:4200"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // IMPORTANTE: Aquí también quitamos el "*" y ponemos los básicos
+        // Lista de encabezados permitidos (sin asteriscos)
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
                 "Content-Type",

@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("inventario-app")
-@CrossOrigin(value = "*")
+
 public class VentaControlador {
 
     @Autowired
