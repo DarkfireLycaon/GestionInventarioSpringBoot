@@ -9,6 +9,8 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column (nullable = false)
+    private String nombre;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -23,10 +25,11 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario(String email, String password, String codigoConfirmacion) {
+    public Usuario(String nombre, String email, String password, String codigoConfirmacion) {
         this.email = email;
         this.password = password;
         this.codigoConfirmacion = codigoConfirmacion;
+        this.nombre = nombre;
     }
     public Long getId() {
         return id;
@@ -69,6 +72,12 @@ public class Usuario {
     }
     public void setTokenExpiration(LocalDateTime tokenExpiration) {
         this.tokenExpiration = tokenExpiration;
+    }
+    public String getNombre() {
+        return nombre;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
 }
