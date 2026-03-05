@@ -45,8 +45,9 @@ public class SecurityConfig {
 
         // Cambiamos a setAllowedOrigins y ponemos las URLs EXACTAS sin asteriscos
         configuration.setAllowedOriginPatterns(Arrays.asList(
-                "https://*.vercel.app",
-                "http://localhost:4200"
+                "https://inventario-eight-mu.vercel.app",
+                "http://localhost:4200",
+                "https://*.vercel.app"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
