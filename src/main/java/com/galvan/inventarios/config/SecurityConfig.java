@@ -44,8 +44,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Cambiamos a setAllowedOrigins y ponemos las URLs EXACTAS sin asteriscos
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://inventario-eight-mu.vercel.app",
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "https://*.vercel.app",
                 "http://localhost:4200"
         ));
 
