@@ -41,24 +41,20 @@ public class SecurityConfig {
 
         return http.build();
     }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Opción 1: Usar setAllowedOrigins con URLs exactas (más seguro)
-        configuration.setAllowedOrigins(Arrays.asList(
+        // Permite localhost, Vercel y CUALQUIER link de Render (.onrender.com)
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:4200",
                 "https://inventario-l7og7ec37-darkfirelycaons-projects.vercel.app",
-                "http://localhost:4200"
+                "https://*.onrender.com"
         ));
 
-        // Opción 2: Si prefieres mantener patrones, usa esto:
-        // configuration.setAllowedOriginPatterns(Arrays.asList(
-        //         "https://*.vercel.app",
-        //         "http://localhost:4200"
-        // ));
-
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // IMPORTANTE: Mantén estos headers para que JWT funcione correctamente
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
                 "Content-Type",
@@ -66,12 +62,14 @@ public class SecurityConfig {
                 "Origin",
                 "X-Requested-With"
         ));
+
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        configuration.setMaxAge(3600L); // Cache preflight por 1 hora
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }

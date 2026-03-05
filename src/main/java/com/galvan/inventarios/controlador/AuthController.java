@@ -94,7 +94,7 @@ public class AuthController {
         boolean activado = usuarioService.confirmarToken(token);
         if (activado) {
             return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create("http://localhost:4200/login?activado=true"))
+                    .location(URI.create("https://inventario-l7og7ec37-darkfirelycaons-projects.vercel.app"))
                     .build();
         }
         return ResponseEntity.badRequest().body("Token inválido o expirado");
