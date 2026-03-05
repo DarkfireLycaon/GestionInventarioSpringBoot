@@ -3,7 +3,7 @@ package com.galvan.inventarios.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer; // <--- ESTE ES EL IMPORT QUE TE FALTA
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,29 +29,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults()) // Ahora sí reconocerá Customizer
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        // Especifica qué rutas son públicas
+                        .requestMatchers("/auth/**").permitAll()  // Permite TODOS los endpoints de auth
+                        .anyRequest().authenticated()
                 );
+        // Si tienes JWT, agrega el filtro aquí
+        // .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
-    // He eliminado el "WebMvcConfigurer" de aquí para que no choque con este Bean,
-    // que es el que manda en Spring Security:
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Cambiamos a setAllowedOrigins y ponemos las URLs EXACTAS sin asteriscos
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-                "https://*.vercel.app",
+        // Opción 1: Usar setAllowedOrigins con URLs exactas (más seguro)
+        configuration.setAllowedOrigins(Arrays.asList(
+                "https://inventario-l7og7ec37-darkfirelycaons-projects.vercel.app",
                 "http://localhost:4200"
         ));
 
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Opción 2: Si prefieres mantener patrones, usa esto:
+        // configuration.setAllowedOriginPatterns(Arrays.asList(
+        //         "https://*.vercel.app",
+        //         "http://localhost:4200"
+        // ));
 
-        // Lista de encabezados permitidos (sin asteriscos)
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
                 "Content-Type",
@@ -59,9 +66,9 @@ public class SecurityConfig {
                 "Origin",
                 "X-Requested-With"
         ));
-
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setMaxAge(3600L); // Cache preflight por 1 hora
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
