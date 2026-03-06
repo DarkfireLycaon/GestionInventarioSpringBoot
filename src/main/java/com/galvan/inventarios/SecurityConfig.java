@@ -45,7 +45,8 @@ public class SecurityConfig {
 
         // Usa setAllowedOrigins y pon la URL de Vercel tal cual sale en el error
         configuration.setAllowedOrigins(Arrays.asList(
-                "https://gestion-inventario-gray.vercel.app",
+                "https://gestion-inventario-*.vercel.app",
+                "https://*-darkfirelycaons-projects.vercel.app",
                 "http://localhost:4200"
         ));
 
