@@ -14,7 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
-@Component
+// @Component
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
