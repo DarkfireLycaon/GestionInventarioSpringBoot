@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("inventario-app")
-
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class VentaControlador {
 
     @Autowired

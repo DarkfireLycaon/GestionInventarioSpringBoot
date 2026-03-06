@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("inventario-app")
-
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ClienteControlador {
     private static final Logger log = LoggerFactory.getLogger(ClienteControlador.class);
 
