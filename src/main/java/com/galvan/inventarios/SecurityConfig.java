@@ -35,15 +35,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Permite explícitamente tu origen de Vercel o usa patrones para ramas dinámicas
-        config.setAllowedOriginPatterns(Arrays.asList(
-                "https://*.vercel.app",
-                "http://localhost:4200"
-        ));
+        // Cambiamos setAllowedOriginPatterns por esto para no dejar dudas
+        config.addAllowedOriginPattern("*");
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
-        config.setAllowCredentials(true); // Muy importante para JWT y sesiones
+        config.setAllowedHeaders(Arrays.asList("*")); // Permite todos los headers
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
