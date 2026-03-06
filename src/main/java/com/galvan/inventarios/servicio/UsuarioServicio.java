@@ -35,7 +35,7 @@ public class UsuarioServicio {
         // 3. Enviar el mail USANDO EmailService
         String asunto = "Confirma tu cuenta - StockMaster";
         String contenidoHtml = generarHtmlConfirmacion(guardado.getEmail(), codigo);
-        emailService.enviarCorreoHtml(guardado.getEmail(), asunto, contenidoHtml);
+        emailService.enviarCorreoConfirmacion(guardado.getEmail(), codigo);
 
         return guardado;
     }
@@ -52,7 +52,7 @@ public class UsuarioServicio {
         // Enviar correo USANDO EmailService
         String asunto = "Restablecer Contraseña - StockMaster";
         String contenidoHtml = generarHtmlRecuperacion(token);
-        emailService.enviarCorreoHtml(usuario.getEmail(), asunto, contenidoHtml);
+        emailService.enviarCorreoRecuperacion(usuario.getEmail(), token);
     }
 
     private String generarHtmlConfirmacion(String email, String codigo) {
