@@ -14,7 +14,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -22,10 +21,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // 1. Desactivar CSRF para APIs
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults()) // Busca automáticamente el bean corsConfigurationSource
+                // 2. Configurar CORS explícitamente aquí
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 3. Abrir los endpoints
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
+                        .requestMatchers("/**").permitAll() // ABRIMOS TODO TEMPORALMENTE
                 );
 
         return http.build();
@@ -34,12 +36,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        // Cambiamos setAllowedOriginPatterns por esto para no dejar dudas
-        config.addAllowedOriginPattern("*");
-
+        // Permitimos TODO para descartar que sea el origen
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("*")); // Permite todos los headers
+        config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
