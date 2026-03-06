@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 
 public class AuthController {
 
