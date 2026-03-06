@@ -22,19 +22,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(request -> {
-                    CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(Arrays.asList("*")); // Permite todo
-                    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    config.setAllowedHeaders(Arrays.asList("*"));
-                    return config;
-                }))
-                .csrf(csrf -> csrf.disable()) // Desactiva CSRF
+                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults()) // Busca automáticamente el bean corsConfigurationSource
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // <--- ESTO ABRE TODA LA API
+                        .anyRequest().permitAll()
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Permite explícitamente tu origen de Vercel o usa patrones para ramas dinámicas
+        config.setAllowedOriginPatterns(Arrays.asList(
+                "https://*.vercel.app",
+                "http://localhost:4200"
+        ));
+
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        config.setAllowCredentials(true); // Muy importante para JWT y sesiones
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     @Bean
