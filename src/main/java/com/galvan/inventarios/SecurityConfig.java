@@ -1,5 +1,6 @@
-package com.galvan.inventarios.config;
+package com.galvan.inventarios;
 
+import com.galvan.inventarios.config.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,15 +30,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults())
+                // 1. Activar CORS explícitamente al inicio
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Especifica qué rutas son públicas
-                        .requestMatchers("/auth/**").permitAll()  // Permite TODOS los endpoints de auth
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
-                );
-        // Si tienes JWT, agrega el filtro aquí
-        // .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                )
+                .httpBasic(Customizer.withDefaults()); // O quítalo si usas JWT puro
 
         return http.build();
     }
@@ -47,6 +47,7 @@ public class SecurityConfig {
 
         // Permite localhost, Vercel y CUALQUIER link de Render (.onrender.com)
         configuration.setAllowedOriginPatterns(Arrays.asList(
+                "https://gestion-inventario-gray.vercel.app",
                 "http://localhost:4200",
                 "https://inventario-l7og7ec37-darkfirelycaons-projects.vercel.app",
                 "https://*.onrender.com"
