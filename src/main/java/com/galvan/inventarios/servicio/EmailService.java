@@ -22,7 +22,7 @@ public class EmailService {
             helper.setTo(destinatario);
             helper.setSubject("Activación de Cuenta - Inventarios");
 
-            String link = "http://localhost:8080/auth/confirmar?token=" + codigo;
+            String link = "https://gestioninventariospringboot.onrender.com/auth/confirmar?token=" + codigo;
 
             // 2. Definimos el HTML
             String contenidoHtml =

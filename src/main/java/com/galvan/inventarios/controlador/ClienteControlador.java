@@ -18,7 +18,6 @@ import java.util.Map;
 
 @RestController
 
-
 public class ClienteControlador {
     private static final Logger log = LoggerFactory.getLogger(ClienteControlador.class);
 
