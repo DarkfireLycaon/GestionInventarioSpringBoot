@@ -68,7 +68,7 @@ public class UsuarioServicio {
             helper.setTo(email);
             helper.setSubject("Restablecer Contraseña - StockMaster");
 
-            String urlRecuperacion = "inventario-l0pjr3yfh-darkfirelycaons-projects.vercel.app/reset-password?token=" + token;
+            String urlRecuperacion = "https://inventario-l0pjr3yfh-darkfirelycaons-projects.vercel.app/reset-password?token=" + token;
 
             // Aquí definimos el diseño con estilos CSS en línea (inline)
             String contenidoHtml =
