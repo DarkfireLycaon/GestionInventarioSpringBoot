@@ -50,13 +50,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+
+        // ⚠️ IMPORTANTE: Reemplaza con la URL NUEVA de tu frontend
         config.setAllowedOrigins(Arrays.asList(
-                "https://inventario-eight-mu.vercel.app",
-                "http://localhost:4200"
+                "https://inventario-jn1fxi6ko-darkfirelycaons-projects.vercel.app", // <-- NUEVA URL
+                "http://localhost:4200" // Para desarrollo local
+                // Elimina la URL anterior si ya no la usas
         ));
+
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        config.setExposedHeaders(Arrays.asList("Authorization"));
         config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
