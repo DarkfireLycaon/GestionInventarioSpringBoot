@@ -23,23 +23,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Desactivar CSRF para APIs
                 .csrf(csrf -> csrf.disable())
-                // 2. Configurar CORS explícitamente aquí
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // 3. Abrir los endpoints
+                .cors(Customizer.withDefaults()) // Esto usa el Bean corsConfigurationSource
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll() // ABRIMOS TODO TEMPORALMENTE
+                        .anyRequest().permitAll() // Todo abierto por ahora
                 );
-
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Permitimos TODO para descartar que sea el origen
-        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        config.setAllowedOriginPatterns(Arrays.asList("*")); // Permite todo origen
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
