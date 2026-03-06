@@ -64,11 +64,11 @@ public class UsuarioServicio {
             // El 'true' indica que el mensaje es multipart (soporta HTML)
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            helper.setFrom("soporte@stockmaster.com");
+            helper.setFrom("rafatorretta@gmail.com");
             helper.setTo(email);
             helper.setSubject("Restablecer Contraseña - StockMaster");
 
-            String urlRecuperacion = "http://localhost:4200/reset-password?token=" + token;
+            String urlRecuperacion = "inventario-l0pjr3yfh-darkfirelycaons-projects.vercel.app/reset-password?token=" + token;
 
             // Aquí definimos el diseño con estilos CSS en línea (inline)
             String contenidoHtml =
