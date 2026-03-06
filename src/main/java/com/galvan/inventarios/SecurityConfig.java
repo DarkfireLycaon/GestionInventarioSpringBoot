@@ -16,6 +16,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
+@org.springframework.core.annotation.Order(1) // <--- AÑADE ESTO
 public class SecurityConfig {
     public SecurityConfig() {
         System.out.println("¡¡¡LA CONFIGURACIÓN DE SEGURIDAD SE HA CARGADO CORRECTAMENTE!!!");
