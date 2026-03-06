@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("inventario-app")
+
 
 public class ClienteControlador {
     private static final Logger log = LoggerFactory.getLogger(ClienteControlador.class);
