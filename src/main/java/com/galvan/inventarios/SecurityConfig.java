@@ -19,34 +19,26 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private JwtFilter jwtFilter;
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(Arrays.asList("*")); // Permite todo
+                    config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(Arrays.asList("*"));
+                    return config;
+                }))
+                .csrf(csrf -> csrf.disable()) // Desactiva CSRF
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll() // <--- ESTO ABRE TODA LA API
+                );
+
+        return http.build();
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        // Usa setAllowedOrigins y pon la URL de Vercel tal cual sale en el error
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://gestion-inventario-*.vercel.app",
-                "https://*-darkfirelycaons-projects.vercel.app",
-                "http://localhost:4200"
-        ));
-
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*")); // Permite todos los headers por ahora para testear
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
 }
