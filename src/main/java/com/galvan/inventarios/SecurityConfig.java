@@ -30,42 +30,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Activar CORS explícitamente al inicio
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(Customizer.withDefaults()) // Esto buscará automáticamente el bean corsConfigurationSource
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults()); // O quítalo si usas JWT puro
-
+                );
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Permite localhost, Vercel y CUALQUIER link de Render (.onrender.com)
-        configuration.setAllowedOriginPatterns(Arrays.asList(
+        // Usa setAllowedOrigins y pon la URL de Vercel tal cual sale en el error
+        configuration.setAllowedOrigins(Arrays.asList(
                 "https://gestion-inventario-gray.vercel.app",
-                "http://localhost:4200",
-                "https://inventario-l7og7ec37-darkfirelycaons-projects.vercel.app",
-                "https://*.onrender.com"
+                "http://localhost:4200"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // IMPORTANTE: Mantén estos headers para que JWT funcione correctamente
-        configuration.setAllowedHeaders(Arrays.asList(
-                "Authorization",
-                "Content-Type",
-                "Accept",
-                "Origin",
-                "X-Requested-With"
-        ));
-
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Permite todos los headers por ahora para testear
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
