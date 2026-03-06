@@ -20,11 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserDetailsService userDetailsService;
-
-    // Inyecta también tu utilidad JWT si la tienes
-    // @Autowired
-    // private JwtUtil jwtUtil;
+    private UserDetailsService userDetailsService; // Esto está bien
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -36,22 +32,19 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
 
-        // Extraer JWT del header
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            // username = jwtUtil.extractUsername(jwt); // Si tienes JwtUtil
+            // Aquí extraerías el username del JWT
+            // username = jwtUtil.extractUsername(jwt);
         }
 
-        // Validar token
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // if (jwtUtil.validateToken(jwt, userDetails)) { // Validar token
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
-            // }
         }
 
         chain.doFilter(request, response);

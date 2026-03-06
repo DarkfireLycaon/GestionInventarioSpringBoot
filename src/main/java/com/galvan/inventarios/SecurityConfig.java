@@ -22,51 +22,26 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private JwtFilter jwtFilter; // Inyecta tu filtro JWT
+    // ❌ NO inyectes JwtFilter aquí (eso causa el ciclo)
+    // @Autowired
+    // private JwtFilter jwtFilter;
 
     public SecurityConfig() {
         System.out.println("¡¡¡LA CONFIGURACIÓN DE SEGURIDAD SE HA CARGADO CORRECTAMENTE!!!");
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
-                // Deshabilitar CSRF porque usamos JWT
                 .csrf(csrf -> csrf.disable())
-
-                // Habilitar CORS con la configuración definida abajo
                 .cors(Customizer.withDefaults())
-
-                // Configurar política de sesión sin estado (stateless)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
-                // Configurar autorización de peticiones
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos (sin autenticación)
-                        .requestMatchers(
-                                "/login",
-                                "/registrar",
-                                "/api/login",
-                                "/api/registrar",
-                                "/auth/login",
-                                "/auth/registrar"
-                        ).permitAll()
-
-                        // Endpoints que requieren autenticación
-                        .requestMatchers("/api/productos/**").authenticated()
-                        .requestMatchers("/api/usuarios/**").authenticated()
-                        .requestMatchers("/api/clientes/**").authenticated()
-                        .requestMatchers("/api/proveedores/**").authenticated()
-                        .requestMatchers("/api/ventas/**").authenticated()
-
-                        // Cualquier otra petición requiere autenticación
+                        .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-
-                // Agregar el filtro JWT antes del filtro de autenticación estándar
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -75,31 +50,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        // IMPORTANTE: Corregí la URL - tenía un error tipográfico
         config.setAllowedOrigins(Arrays.asList(
-                "https://gestioninventario-eight-mu.vercel.app", // Tu frontend (corregido)
-                "http://localhost:4200" // Desarrollo local
+                "https://inventario-eight-mu.vercel.app",
+                "http://localhost:4200"
         ));
-
-        config.setAllowedMethods(Arrays.asList(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS"
-        ));
-
-        config.setAllowedHeaders(Arrays.asList(
-                "Authorization",
-                "Content-Type",
-                "X-Requested-With",
-                "Accept",
-                "Origin"
-        ));
-
-        config.setExposedHeaders(Arrays.asList(
-                "Authorization"
-        ));
-
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
