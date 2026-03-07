@@ -9,17 +9,22 @@ import java.util.UUID;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+
 @Service
 public class UsuarioServicio {
+
+    @Autowired // 👈 ESTO FALTABA
+    private SendGridApiService sendGridApiService;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private EmailService emailService; // ✅ ÚNICO servicio de email
-
-    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    // EmailService ya no es necesario, lo reemplazamos con SendGridApiService
+    // @Autowired
+    // private EmailService emailService; // 👈 ELIMINADO
 
     public Usuario registrar(Usuario usuario) {
         // Encriptar password
@@ -32,13 +37,8 @@ public class UsuarioServicio {
 
         Usuario guardado = usuarioRepository.save(usuario);
 
-        // Enviar el mail - PERO sin bloquear si falla
-        try {
-            emailService.enviarCorreoConfirmacion(guardado.getEmail(), codigo);
-        } catch (Exception e) {
-            // Loggear el error pero no impedir el registro
-            System.err.println("Error enviando email: " + e.getMessage());
-        }
+        // ✅ Enviar correo de confirmación con SendGrid
+        sendGridApiService.enviarCorreoConfirmacion(guardado.getEmail(), codigo);
 
         return guardado;
     }
@@ -52,38 +52,8 @@ public class UsuarioServicio {
         usuario.setTokenExpiration(LocalDateTime.now().plusMinutes(15));
         usuarioRepository.save(usuario);
 
-        // Enviar correo USANDO EmailService
-        String asunto = "Restablecer Contraseña - StockMaster";
-        String contenidoHtml = generarHtmlRecuperacion(token);
-        emailService.enviarCorreoRecuperacion(usuario.getEmail(), token);
-    }
-
-    private String generarHtmlConfirmacion(String email, String codigo) {
-        return "<div style='font-family: Arial, sans-serif; text-align: center; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px; margin: auto;'>" +
-                "<h2 style='color: #6f42c1;'>StockMaster</h2>" +
-                "<p>Gracias por registrarte. Tu código de confirmación es:</p>" +
-                "<div style='margin: 30px 0;'>" +
-                "<span style='background-color: #6f42c1; color: white; padding: 12px 25px; border-radius: 5px; font-weight: bold; font-size: 24px;'>" + codigo + "</span>" +
-                "</div>" +
-                "<p style='color: #888;'>Ingresa este código en la aplicación para activar tu cuenta.</p>" +
-                "</div>";
-    }
-
-    private String generarHtmlRecuperacion(String token) {
-        String urlRecuperacion = "https://inventario-l0pjr3yfh-darkfirelycaons-projects.vercel.app/reset-password?token=" + token;
-
-        return "<div style='font-family: Arial, sans-serif; text-align: center; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px; margin: auto;'>" +
-                "<h2 style='color: #6f42c1;'>StockMaster</h2>" +
-                "<p>Has solicitado restablecer tu contraseña. Haz clic en el botón de abajo:</p>" +
-                "<div style='margin: 30px 0;'>" +
-                "<a href='" + urlRecuperacion + "' style='background-color: #6f42c1; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>" +
-                "Restablecer Contraseña" +
-                "</a>" +
-                "</div>" +
-                "<p style='color: #888; font-size: 12px;'>Este enlace expirará en 15 minutos.</p>" +
-                "<hr style='border: 0; border-top: 1px solid #eee;'>" +
-                "<p style='color: #aaa; font-size: 10px;'>Si no solicitaste este cambio, ignora este correo.</p>" +
-                "</div>";
+        // ✅ Enviar correo de recuperación TAMBIÉN con SendGrid
+        sendGridApiService.enviarCorreoRecuperacion(usuario.getEmail(), token); // Necesitas crear este método
     }
 
     public boolean confirmarCuenta(String email, String codigo) {
@@ -126,4 +96,6 @@ public class UsuarioServicio {
         usuarioRepository.save(usuario);
     }
 
+    // Los métodos generarHtmlConfirmacion y generarHtmlRecuperacion
+    // ahora están en SendGridApiService, así que los eliminamos de aquí
 }
