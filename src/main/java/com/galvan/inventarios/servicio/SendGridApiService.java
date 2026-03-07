@@ -17,7 +17,7 @@ public class SendGridApiService {
 
     private static final Logger log = LoggerFactory.getLogger(SendGridApiService.class);
 
-    @Value("${sendgrid.api.key}")
+    @Value("${SENDGRID_API_KEY}")
     private String sendGridApiKey;
 
     @Async
