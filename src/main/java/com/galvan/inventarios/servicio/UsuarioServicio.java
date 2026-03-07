@@ -22,20 +22,23 @@ public class UsuarioServicio {
     private BCryptPasswordEncoder passwordEncoder;
 
     public Usuario registrar(Usuario usuario) {
-        // 1. Encriptar password
+        // Encriptar password
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
-        // 2. Generar código de 6 dígitos aleatorio
+        // Generar código de 6 dígitos
         String codigo = String.valueOf((int)(Math.random() * 900000) + 100000);
         usuario.setCodigoConfirmacion(codigo);
         usuario.setEnabled(false);
 
         Usuario guardado = usuarioRepository.save(usuario);
 
-        // 3. Enviar el mail USANDO EmailService
-        String asunto = "Confirma tu cuenta - StockMaster";
-        String contenidoHtml = generarHtmlConfirmacion(guardado.getEmail(), codigo);
-        emailService.enviarCorreoConfirmacion(guardado.getEmail(), codigo);
+        // Enviar el mail - PERO sin bloquear si falla
+        try {
+            emailService.enviarCorreoConfirmacion(guardado.getEmail(), codigo);
+        } catch (Exception e) {
+            // Loggear el error pero no impedir el registro
+            System.err.println("Error enviando email: " + e.getMessage());
+        }
 
         return guardado;
     }

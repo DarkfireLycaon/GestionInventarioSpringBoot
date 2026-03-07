@@ -36,17 +36,28 @@ public class AuthController {
     @PostMapping("/registrar")
     public ResponseEntity<?> registrar(@RequestBody Usuario usuario) {
         try {
+            // Verificar si el usuario ya existe
             if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-                return ResponseEntity.badRequest()
-                        .body(Collections.singletonMap("error", "El correo ya está registrado"));
+                return ResponseEntity
+                        .badRequest()
+                        .body(Map.of("mensaje", "El correo ya está registrado"));
             }
 
+            // Guardar el usuario
             usuarioService.registrar(usuario);
-            return ResponseEntity.ok(Collections.singletonMap("mensaje", "Usuario registrado con éxito"));
+
+            // ✅ IMPORTANTE: Devolver una respuesta 200 OK con mensaje
+            return ResponseEntity
+                    .ok()
+                    .body(Map.of(
+                            "mensaje", "Usuario registrado con éxito. Revisa tu correo para confirmar.",
+                            "email", usuario.getEmail()
+                    ));
 
         } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body(Collections.singletonMap("error", "Error en el servidor: " + e.getMessage()));
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("mensaje", "Error en el servidor: " + e.getMessage()));
         }
     }
 
