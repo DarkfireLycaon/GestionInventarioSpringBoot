@@ -22,7 +22,6 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // ❌ NO inyectes JwtFilter aquí (eso causa el ciclo)
     // @Autowired
     // private JwtFilter jwtFilter;
 

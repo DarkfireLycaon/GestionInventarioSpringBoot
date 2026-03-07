@@ -20,7 +20,10 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserDetailsService userDetailsService; // Esto está bien
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtUtils jwtUtils; // 👈 INYECTA JwtUtils
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -34,17 +37,36 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            // Aquí extraerías el username del JWT
-            // username = jwtUtil.extractUsername(jwt);
+
+            try {
+                // 1. Extraer email del token usando JwtUtils
+                username = jwtUtils.getEmailFromToken(jwt);
+                System.out.println("📌 Email extraído del token: " + username);
+
+                // 2. Validar el token
+                boolean tokenValido = jwtUtils.validarToken(jwt);
+                System.out.println("📌 Token válido: " + tokenValido);
+
+            } catch (Exception e) {
+                System.out.println("❌ Error procesando token: " + e.getMessage());
+            }
         }
 
+        // Si tenemos username y no hay autenticación previa
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // Cargar el usuario desde la BD
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
+            // Crear el token de autenticación (con authorities del usuario)
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            // Establecer la autenticación en el contexto
             SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            System.out.println("✅ Usuario autenticado: " + username);
         }
 
         chain.doFilter(request, response);
