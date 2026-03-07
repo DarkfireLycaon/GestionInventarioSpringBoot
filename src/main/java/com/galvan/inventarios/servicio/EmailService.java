@@ -31,7 +31,7 @@ public class EmailService {
 
             // Configurar remitente explícitamente
             helper.setFrom("rafatorretta@gmail.com");
-
+            message.setFrom("rafatorretta@gmail.com");
             // Verificar que el código no sea nulo
             if (codigo == null || codigo.isEmpty()) {
                 log.error("❌ Código de confirmación nulo o vacío para: {}", destinatario);
