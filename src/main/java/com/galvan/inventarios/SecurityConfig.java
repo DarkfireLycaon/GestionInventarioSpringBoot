@@ -34,10 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .cors(Customizer.withDefaults()) // 👈 ESTO HABILITA LA CONFIGURACIÓN CORS
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated()
@@ -51,17 +48,16 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ⚠️ IMPORTANTE: Reemplaza con la URL NUEVA de tu frontend
-        config.setAllowedOrigins(Arrays.asList(
-                "https://*.vercel.app",           // Acepta cualquier subdominio de vercel.app
+        // 🚀 Configuración que acepta TODAS las URLs de Vercel
+        config.setAllowedOriginPatterns(Arrays.asList(
+                "https://*.vercel.app",   // El comodín * funciona con patrones
                 "http://localhost:4200"
-                // Elimina la URL anterior si ya no la usas
         ));
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        config.setAllowedHeaders(Arrays.asList("*")); // O la lista específica que prefieras
         config.setExposedHeaders(Arrays.asList("Authorization"));
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(true); // Necesario para JWT
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
