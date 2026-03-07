@@ -53,8 +53,8 @@ public class SecurityConfig {
 
         // ⚠️ IMPORTANTE: Reemplaza con la URL NUEVA de tu frontend
         config.setAllowedOrigins(Arrays.asList(
-                "https://inventario-jn1fxi6ko-darkfirelycaons-projects.vercel.app", // <-- NUEVA URL
-                "http://localhost:4200" // Para desarrollo local
+                "https://*.vercel.app",           // Acepta cualquier subdominio de vercel.app
+                "http://localhost:4200"
                 // Elimina la URL anterior si ya no la usas
         ));
 
