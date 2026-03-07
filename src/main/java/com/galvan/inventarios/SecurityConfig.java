@@ -34,9 +34,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults()) // 👈 ESTO HABILITA LA CONFIGURACIÓN CORS
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
+                        // 👇 PERMITIR TODAS LAS PETICIONES OPTIONS (PREFLIGHT)
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        // 👇 ENDPOINTS PÚBLICOS
                         .requestMatchers("/auth/**").permitAll()
+                        // 👇 TODO LO DEMÁS REQUIERE AUTENTICACIÓN
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
